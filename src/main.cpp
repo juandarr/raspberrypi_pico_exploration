@@ -258,23 +258,10 @@ bool next_rtttl() {
     return 0; // all done
   }
 }
-/*
-void tone(int pin, int16_t note, int16_t duration) {
-  for(int16_t x=0;x<(duration*1000/note);x++) {
-    PIN_MAP[pin].gpio_peripheral->BSRR = PIN_MAP[pin].gpio_pin; // HIGH
-    delayMicroseconds(note);
-    PIN_MAP[pin].gpio_peripheral->BRR = PIN_MAP[pin].gpio_pin;  // LOW
-    delayMicroseconds(note);
-  }
-}
-*/
+
 //-------------------
 // MAIN PROGRAM
 //-------------------
-
-//int hour = Time.hour();
-
-//int old_hour = hour;
 
 bool play = false;
 
@@ -287,16 +274,9 @@ void setup() {
 
 void loop(void)
 {
-  //This is in case you want to start an alarm every hour
-  //hour = Time.hour();
-  //old_hour != hour ||  
   if (digitalRead(buttonPin)){
       play = true;
   }
-   //   if (old_hour != hour)
-   //   {
-   //     old_hour= hour;
-   //   }
   
   if(play) 
   {
