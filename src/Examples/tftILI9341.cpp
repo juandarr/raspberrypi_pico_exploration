@@ -65,7 +65,7 @@ void loop()
     // png.close(); // not needed for memory->memory decode
   }
   delay(1440000);
-  tft.fillScreen(random(0x10000));
+  //tft.fillScreen(random(0x10000));
 }
 
 
