@@ -19,11 +19,11 @@
 #include "Arduino.h"
 // Include the PNG decoder library
 #include <PNGdec.h>
-#include "resources/reader.h" // Image is stored here in an 8-bit array
-#include "resources/astro.h"
-#include "resources/bike.h"
-#include "resources/super.h"
-#include "resources/camera.h"
+#include "Examples/resources/reader.h" // Image is stored here in an 8-bit array
+#include "Examples/resources/astro.h"
+#include "Examples/resources/bike.h"
+#include "Examples/resources/super.h"
+#include "Examples/resources/camera.h"
 
 
 // 1. Create an array of pointers to your image data arrays.
