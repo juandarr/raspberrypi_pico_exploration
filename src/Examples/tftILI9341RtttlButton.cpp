@@ -10,7 +10,19 @@
 // Include the TFT library https://github.com/Bodmer/TFT_eSPI
 #include "SPI.h"
 #include <TFT_eSPI.h>              // Hardware-specific library
-#include <string>
+
+// Stock font and GFXFF reference handle
+#define GFXFF 1
+#define FF18 &FreeSans12pt7b
+
+// Custom are fonts added to library "TFT_eSPI\Fonts\Custom" folder
+// a #include must also be added to the "User_Custom_Fonts.h" file
+// in the "TFT_eSPI\User_Setups" folder. See example entries.
+#define CF_OL24 &Orbitron_Light_24
+#define CF_OL32 &Orbitron_Light_32
+#define CF_RT24 &Roboto_Thin_24
+#define CF_S24  &Satisfy_24
+#define CF_Y32  &Yellowtail_32
 
 #define OCTAVE_OFFSET 0
 #define DEBUG false
@@ -141,6 +153,7 @@ void begin_rtttl(char *p)
 
     Serial.print("The extracted name is: ");
     Serial.println(nameBuffer); // Prints "The extracted name is: PlayerName"
+    tft.drawString(nameBuffer, 20, 300, GFXFF);// Print the string name of the font
   }
   p++;                     // skip ':'
 
@@ -340,6 +353,8 @@ void setup() {
   // Initialise the TFT
   tft.begin();
   tft.fillScreen(TFT_BLACK);
+  tft.setTextColor(TFT_WHITE, TFT_BLACK);
+  tft.setFreeFont(FF18);                 // Select the font
 
   pinMode(ledPin, OUTPUT);
   pinMode(buttonUp, INPUT_PULLDOWN);
