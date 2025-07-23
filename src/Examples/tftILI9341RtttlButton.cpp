@@ -65,7 +65,7 @@ char * songs[] ={
 (char *)"ZeldaDungeon:d=4,o=5,b=80:16g,16a#,16d6,16d#6,16g,16a#,16d6,16d#6,16g,16a#,16d6,16d#6,16g,16a#,16d6,16d#6,16f#,16a,16d6,16d#6,16f#,16a,16d6,16d#6,16f#,16a,16d6,16d#6,16f#,16a,16d6,16d#6,16f,16g#,16d6,16d#6,16f,16g#,16d6,16d#6,16f,16g#,16d6,16d#6,16f,16g#,16d6,16d#6,16e,16g,16d6,16d#6,16e,16g,16d6,16d#6,16e,16g,16d6,16d#6,16e,16g,16d6,16d#6,16d#,16g,16c6,16d6,16d#,16g,16c6,16d6,16d#,16g,16c6,16d6,16d#,16g,16c6,16d6,16d,16g,16c6,16d6,16d,16g,16c6,16d6,16d,16g,16c6,16d6,16d,16g,16c6,16d6,16c,16f#,16a",
 (char *)"ZeldaOvrGB:d=4,o=5,b=120:8c.,16g4,g.4,8c,16c,16d,16d#,16f,g.,16a,16a#,8a.,8g.,8f,8g.,16c,1c6,8p,8g,8d#6,8d6,8d#6,8f6,8g6,16c6,16g6,c.7,8g6,8f6,8d#6,8f6,16a#,16f6,a#.6,8f6,8d#6,8d6,8d#.6,16g,g.,16g,16f,8d#,8f,1g,8c.6,16g,g.,8c6,16c6,16d6,16d#6,16f6,g.6,16g#6,16a#6,8g#6,g6,8f6,8d#.6,16c6,g.6,8d#6,8c7,8g6,d#.7,8d7,8c7,8d7,8d#7,8f7,8g7,16f7,16g7,g#.7,a#7,8g#7,g7,8d7,8d#7,8f7,8d#7,8d7,2c.7",
 (char *)"Mission Impossible:d=16,o=6,b=95:32d,32d#,32d,32d#,32d,32d#,32d,32d#,32d,32d,32d#,32e,32f,32f#,32g,g,8p,g,8p,a#,p,c7,p,g,8p,g,8p,f,p,f#,p,g,8p,g,8p,a#,p,c7,p,g,8p,g,8p,f,p,f#,p,a#,g,2d,32p,a#,g,2c#,32p,a#,g,2c,a#5,8c,2p,32p,a#5,g5,2f#,32p,a#5,g5,2f,32p,a#5,g5,2e,d#,8d",
-(char *)"Zelda_gerudo:d=4,o=5,b=125:16c#,16f#,16g#,8a,16p,16c#,16f#,16g#,a,8p,16d,16f#,16g#,8a,16p,16d,16f#,16g#,a,8p,16b4,16e,16f#,8g#,16p,16b4,16e,16f#,g#,8p,16f#,16g#,16f#,2f,8p,16c#,16f#,16g#,8a,16p,16c#,16f#,16g#,a,8p,16d,16f#,16g#,8a,16p,16d,16f#,16g#,a,8p,16b4,16e,16f#,8g#,16p,16b4,16e,16f#,g#,8p,16a,16b,16a,2g#" ,
+(char *)"Zelda_gerudo:d=4,o=5,b=100:16c#,16f#,16g#,8a,16p,16c#,16f#,16g#,a,8p,16d,16f#,16g#,8a,16p,16d,16f#,16g#,a,8p,16b4,16e,16f#,8g#,16p,16b4,16e,16f#,g#,8p,16f#,16g#,16f#,2f,8p,16c#,16f#,16g#,8a,16p,16c#,16f#,16g#,a,8p,16d,16f#,16g#,8a,16p,16d,16f#,16g#,a,8p,16b4,16e,16f#,8g#,16p,16b4,16e,16f#,g#,8p,16a,16b,16a,2g#" ,
 (char *)"ZeldaLegend:d=4,o=5,b=125:a#,f.,8a#,16a#,16c6,16d6,16d#6,2f6,8p,8f6,16f.6,16f#6,16g#.6,2a#.6,16a#.6,16g#6,16f#.6,8g#.6,16f#.6,2f6,f6,8d#6,16d#6,16f6,2f#6,8f6,8d#6,8c#6,16c#6,16d#6,2f6,8d#6,8c#6,8c6,16c6,16d6,2e6,g6,8f6,16f,16f,8f,16f,16f,8f,16f,16f,8f,8f,a#,f.,8a#,16a#,16c6,16d6,16d#6,2f6,8p,8f6,16f.6,16f#6,16g#.6,2a#.6,c#7,c7,2a6,f6,2f#.6,a#6,a6,2f6,f6,2f#.6,a#6,a6,2f6,d6,2d#.6,f#6,f6,2c#6,a#,c6,16d6,2e6,g6,8f6,16f,16f,8f,16f,16f,8f,16f,16f,8f,8f",
 (char *)"victoryFFVIII:d=4,o=5,b=140:32d6,32p,32d6,32p,32d6,32p,d6,a#,c6,16d6,8p,16c6,2d6,a,g,a,16g,16p,c6,16c6,16p,b,16c6,16p,b,16b,16p,a,g,f#,16g,16p,1e,a,g,a,16g,16p,c6,16c6,16p,b,16c6,16p,b,16b,16p,a,g,a,16c6,16p,1d6",
 (char *)"RickRoll:d=4,o=5,b=200:8g,8a,8c6,8a,e6,8p,e6,8p,d6.,p,8p,8g,8a,8c6,8a,d6,8p,d6,8p,c6,8b,a.,8g,8a,8c6,8a,2c6,d6,b,a,g.,8p,g,2d6,2c6.,p,8g,8a,8c6,8a,e6,8p,e6,8p,d6.,p,8p,8g,8a,8c6,8a,2g6,b,c6.,8b,a,8g,8a,8c6,8a,2c6,d6,b,a,g.,8p,g,2d6,2c6.",
@@ -94,7 +94,10 @@ long duration;
 byte note;
 byte scale;
 bool songStarts = false;
+bool songIsPlaying = false;
 char *songPtr;
+unsigned long noteEndTime = 0; // Stores the time (in ms) when the current note/pause should end
+bool isNoteActive = false;     // True if a note or pause is currently active;
 
 void begin_rtttl(int idx,char *p)
 {
@@ -181,122 +184,73 @@ void begin_rtttl(int idx,char *p)
 }
 
 bool next_rtttl() {
+char *p = songPtr;
 
-  char *p = songPtr;
-  // if notes remain, play next note
-  if(*p)
-  {
-    // first, get note duration, if available
-    num = 0;
-    while(isdigit(*p))
-    {
-      num = (num * 10) + (*p++ - '0');
-    }
-    
-    if(num) duration = wholenote / num;
-    else duration = wholenote / default_dur;  // we will need to check if we are a dotted note after
+  if (!*p) {
+    return false; // Song is over
+  }
 
-    // now get the note
-    note = 0;
+  // Get note duration
+  num = 0;
+  while (isdigit(*p)) {
+    num = (num * 10) + (*p++ - '0');
+  }
+  if (num) duration = wholenote / num;
+  else duration = wholenote / default_dur;
 
-    switch(*p)
-    {
-      case 'c':
-        note = 1;
-        break;
-      case 'd':
-        note = 3;
-        break;
-      case 'e':
-        note = 5;
-        break;
-      case 'f':
-        note = 6;
-        break;
-      case 'g':
-        note = 8;
-        break;
-      case 'a':
-        note = 10;
-        break;
-      case 'b':
-        note = 12;
-        break;
-      case 'p':
-      default:
-        note = 0;
-    }
+  // Get the note
+  note = 0;
+  switch (*p) {
+    case 'c': note = 1; break;
+    case 'd': note = 3; break;
+    case 'e': note = 5; break;
+    case 'f': note = 6; break;
+    case 'g': note = 8; break;
+    case 'a': note = 10; break;
+    case 'b': note = 12; break;
+    case 'p': default: note = 0; break;
+  }
+  p++;
+
+  // Get sharp
+  if (*p == '#') {
+    note++;
     p++;
-
-    // now, get optional '#' sharp
-    if(*p == '#')
-    {
-      note++;
-      p++;
-    }
-
-    // now, get optional '.' dotted note
-    if(*p == '.')
-    {
-      duration += duration/2;
-      p++;
-    }
-  
-    // now, get scale
-    if(isdigit(*p))
-    {
-      scale = *p - '0';
-      p++;
-    }
-    else
-    {
-      scale = default_oct;
-    }
-
-    scale += OCTAVE_OFFSET;
-
-    if(*p == ',')
-      p++;       // skip comma for next note (or we may be at the end)
-
-    // Save current song pointer...
-    songPtr = p;
-
-    // now play the note
-    if(note)
-    {
-      if(DEBUG) {
-        Serial.print("Playing: ");
-        Serial.print(scale, 10); Serial.print(' ');
-        Serial.print(note, 10); Serial.print(" (");
-        Serial.print(noteFreq[(scale - lowest_oct) * 12 + (note-1)], 10);
-        Serial.print(") ");
-        Serial.println(duration, 10);
-      }
-      uint16_t frequency = noteFreq[(scale - lowest_oct) * 12 + (note-1)];
-      tone(speaker, frequency, duration);
-      Serial.printf("Frequency: %f\n", frequency);
-
-      // to distinguish the notes, set a minimum time between them.
-      // the note's duration + 45% seems to work well:
-      //1.45
-      int pauseBetweenNotes = duration * 1.2;
-      delay(pauseBetweenNotes);
-      // stop the tone playing:
-      noTone(speaker);
-    }
-    else
-    {
-      if(DEBUG) {
-        Serial.print("Pausing: ");
-        Serial.println(duration, 10);
-      }
-      delay(duration);
-    }
-    return 1; // note played successfully.
   }
-  else {
-    return 0; // all done
+
+  // Get dotted note
+  if (*p == '.') {
+    duration += duration / 2;
+    p++;
   }
+
+  // Get scale
+  if (isdigit(*p)) {
+    scale = *p - '0';
+    p++;
+  } else {
+    scale = default_oct;
+  }
+  scale += OCTAVE_OFFSET;
+
+  if (*p == ',') p++;
+
+  // Save current song position
+  songPtr = p;
+
+  // Set a pause between notes
+  long pauseBetweenNotes = duration * 0.20;
+
+  // Play the note or pause
+  if (note) {
+    uint16_t frequency = noteFreq[(scale - lowest_oct) * 12 + (note - 1)];
+    tone(speaker, frequency, duration);
+  }
+  // For both notes and pauses, we set the timer for when the *entire* event (note + its pause) is over.
+  noteEndTime = millis() + duration + pauseBetweenNotes;
+  isNoteActive = true; // Flag that a note/pause is happening
+
+  return true; // Note was successfully started
 }
 
 //=========================================v==========================================
@@ -341,64 +295,77 @@ int i = 0;
 int tmp = -1;
 int buttonPrevState = 0;
 int buttonNextState = 0;
-
+int songSize = (sizeof(songs)/sizeof(char *));
 void loop(void)
 {
-
-  buttonPrevState = digitalRead(buttonPrev);
-  buttonNextState = digitalRead(buttonNext);
-
-  if (buttonPrevState == HIGH){
-    i -= 1;
-    delay(60);
-  }else if (buttonNextState == HIGH){
-    i += 1;
-    delay(60);
-  }
-  if (tmp!=i) {
-
-  tft.fillScreen(TFT_BLACK);
-  int16_t rc = png.openFLASH((uint8_t *)image_data[i%(sizeof(image_data)/sizeof(char *))], image_sizes[i%(sizeof(image_data)/sizeof(char *))], pngDraw);
-    if (rc == PNG_SUCCESS) {
-      Serial.println("Successfully opened png file");
-      Serial.printf("image specs: (%d x %d), %d bpp, pixel type: %d\n", png.getWidth(), png.getHeight(), png.getBpp(), png.getPixelType());
-      tft.startWrite();
-      uint32_t dt = millis();
-      rc = png.decode(NULL, 0);
-      Serial.print(millis() - dt); Serial.println("ms");
-      tft.endWrite();
-    // png.close(); // not needed for memory->memory decode
-
-  }
-
-    if(!songStarts) 
-    { // Start song
-      digitalWrite(ledPin,HIGH); // Light the onboard LED while the song plays
-      songStarts = true;
-      begin_rtttl(i%(sizeof(songs)/sizeof(char *)),songs[i%(sizeof(songs)/sizeof(char *))]);
+bool buttonPressed = false;
+  
+  // --- 1. Check for button presses and handle interruptions ---
+  if (digitalRead(buttonPrev) == HIGH) {
+    if (songIsPlaying){
+      buttonPressed = true;
+    }else{
+      i -= 1;
+      if (i==-1) i = songSize-1;
     }
-    //Remove if you want to play ring tone while pressing push button
-    while (next_rtttl()){
-      buttonPrevState = digitalRead(buttonPrev);
-      buttonNextState = digitalRead(buttonNext);
-      if (buttonPrevState || buttonNextState){
-        digitalWrite(ledPin,LOW); // Turn off the onboard LED.
-        songStarts = false;
-        play = false;
-        if(DEBUG) Serial.println("Done!");
-        delay(200);
-        break;
+    delay(60);
+  } else if (digitalRead(buttonNext) == HIGH) {
+    if (songIsPlaying){
+      buttonPressed = true;
+    }else{
+      i += 1;
+      if (i==songSize) i=0;
+
+    }
+    delay(60);
+  }
+  
+  if (buttonPressed) {
+    noTone(speaker);         // Immediately stop any sound
+    songIsPlaying = false;   // Stop the current song playback logic
+    isNoteActive = false;      // Reset the note state
+    digitalWrite(ledPin, LOW);
+    delay(100); // Simple debounce
+  }
+
+  // --- 2. If the image index has changed, draw the new image and start a new song ---
+  if (tmp != i) {
+    tmp = i; // Update the tracking variable
+    
+    // Draw the new PNG image
+    tft.fillScreen(TFT_BLACK);
+    int currentIndex = i%(sizeof(image_data)/sizeof(char *));
+    int rc = png.openFLASH((uint8_t *)image_data[currentIndex], image_sizes[currentIndex], pngDraw);
+    if (rc == PNG_SUCCESS) {
+      tft.startWrite();
+      png.decode(NULL, 0);
+      tft.endWrite();
+    }
+    
+    // Start the new song
+    digitalWrite(ledPin, HIGH);
+    int songIndex = i % songSize;
+    begin_rtttl(songIndex, songs[songIndex]);
+    songIsPlaying = true; // Enable playback in the main loop
+  }
+  
+  // --- 3. Non-blocking song playback logic ---
+  if (songIsPlaying) {
+    // First, check if the active note/pause duration has ended
+    if (isNoteActive && millis() >= noteEndTime) {
+      isNoteActive = false;
+      // noTone() is not needed here because the tone() function with a duration handles it.
+      // This just marks the end of the full note+pause time slot.
+    }
+    
+    // If no note is currently active, play the next one
+    if (!isNoteActive) {
+      if (!next_rtttl()) {
+        // If playNextRtttlNote returns false, the song is over
+        songIsPlaying = false;
+        digitalWrite(ledPin, LOW);
       }
     }
-    if(!next_rtttl()) 
-    { // Play next note
-      digitalWrite(ledPin,LOW); // Turn off the onboard LED.
-      songStarts = false;
-      play = false;
-      if(DEBUG) Serial.println("Done!");
-      delay(200);
-    }
-  tmp = i; 
   }
   
 }
