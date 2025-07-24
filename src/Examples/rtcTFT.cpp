@@ -1,39 +1,8 @@
-/*
- An example digital clock using a TFT LCD screen to show the time.
- Demonstrates use of the font printing routines. (Time updates but date does not.)
+#include "Arduino.h"
+#include "uRTCLib.h"
+#include "Wire.h"
 
- It uses the time of compile/upload to set the time
- For a more accurate clock, it would be better to use the RTClib library.
- But this is just a demo...
-
- Make sure all the display driver and pin connections are correct by
- editing the User_Setup.h file in the TFT_eSPI library folder.
-
- #########################################################################
- ###### DON'T FORGET TO UPDATE THE User_Setup.h FILE IN THE LIBRARY ######
- #########################################################################
-
- Based on clock sketch by Gilchrist 6/2/2014 1.0
-
-A few colour codes:
-
-code	color
-0x0000	Black
-0xFFFF	White
-0xBDF7	Light Gray
-0x7BEF	Dark Gray
-0xF800	Red
-0xFFE0	Yellow
-0xFBE0	Orange
-0x79E0	Brown
-0x7E0	Green
-0x7FF	Cyan
-0x1F	Blue
-0xF81F	Pink
-
- */
-#include <Arduino.h>
-#include "Free_Fonts.h" // Include the header file attached to this sketch
+#include "Examples/resources/Free_Fonts.h" // Include the header file attached to this sketch
 #include <TFT_eSPI.h> // Hardware-specific library
 #include <SPI.h>
 
@@ -41,95 +10,95 @@ code	color
 
 TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
 
-uint32_t targetTime = 0;                    // for next 1 second timeout
+// uRTCLib rtc;
+uRTCLib rtc(0x68);
 
-static uint8_t conv2d(const char* p); // Forward declaration needed for IDE 1.6.x
+char daysOfTheWeek[7][12] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 
-uint8_t hh = conv2d(__TIME__), mm = conv2d(__TIME__ + 3), ss = conv2d(__TIME__ + 6); // Get H, M, S from compile time
+void setup() {
+  Serial.begin(9600);
+  Wire1.setSDA(14);
+  Wire1.setSCL(15);
+  Wire1.begin();
+  //URTCLIB_WIRE.begin();
 
-byte omm = 99, oss = 99;
-byte xcolon = 0, xsecs = 0;
-unsigned int colour = 0;
-
-void setup(void) {
-  //Serial.begin(115200);
+  // Comment out below line once you set the date & time.
+  // Following line sets the RTC with an explicit date & time
+  // for example to set April 14 2025 at 12:56 you would call:
+  //rtc.set(15, 36, 18, 4, 23, 7, 25);
+  // rtc.set(second, minute, hour, dayOfWeek, dayOfMonth, month, year)
+  // set day of week (1=Sunday, 7=Saturday)
   tft.init();
   tft.setRotation(0);
   tft.fillScreen(TFT_BLACK);
 
   tft.setTextSize(1);
   tft.setTextColor(TFT_YELLOW, TFT_BLACK);
-  //tft.setFreeFont(FF18);                 // Select the font
-
-  targetTime = millis() + 1000;
 }
 
 int charSize = 6;
 int secSize = 4;
+
+byte xcolon = 0, xsecs = 0;
+
 void loop() {
-  if (targetTime < millis()) {
-    // Set next update for 1 second later
-    targetTime = millis() + 1000;
-
-    // Adjust the time values by adding 1 second
-    ss++;              // Advance second
-    if (ss == 60) {    // Check for roll-over
-      ss = 0;          // Reset seconds to zero
-      omm = mm;        // Save last minute time for display update
-      mm++;            // Advance minute
-      if (mm > 59) {   // Check for roll-over
-        mm = 0;
-        hh++;          // Advance hour
-        if (hh > 23) { // Check for 24hr roll-over (could roll-over on 13)
-          hh = 0;      // 0 for 24 hour clock, set to 1 for 12 hour clock
-        }
-      }
-    }
-
+  rtc.refresh();
 
     // Update digital time
     int xpos = 0;
     int ypos = 108; // Top left corner ot clock text, about half way down
     int ysecs = ypos + 16;
 
-    if (omm != mm) { // Redraw hours and minutes time every minute
-      omm = mm;
       // Draw hours and minutes
+      uint8_t hh = rtc.hour();
       if (hh < 10) xpos += tft.drawChar('0', xpos, ypos, charSize); // Add hours leading zero for 24 hr clock
       xpos += tft.drawNumber(hh, xpos, ypos, charSize);             // Draw hours
       xcolon = xpos; // Save colon coord for later to flash on/off later
       xpos += tft.drawChar(':', xpos, ypos - charSize, charSize);
+      uint8_t  mm = rtc.minute();
       if (mm < 10) xpos += tft.drawChar('0', xpos, ypos, charSize); // Add minutes leading zero
       xpos += tft.drawNumber(mm, xpos, ypos, charSize);             // Draw minutes
       xsecs = xpos; // Sae seconds 'x' position for later display updates
-    }
-    if (oss != ss) { // Redraw seconds time every second
-      oss = ss;
-      xpos = xsecs;
+    
 
-      if (ss % 2) { // Flash the colons on/off
-        tft.setTextColor(0x39C4, TFT_BLACK);        // Set colour to grey to dim colon
         tft.drawChar(':', xcolon, ypos - charSize, charSize);     // Hour:minute colon
         xpos += tft.drawChar(':', xsecs, ysecs, secSize); // Seconds colon
-        tft.setTextColor(TFT_YELLOW, TFT_BLACK);    // Set colour back to yellow
-      }
-      else {
-        tft.drawChar(':', xcolon, ypos - charSize, charSize);     // Hour:minute colon
-        xpos += tft.drawChar(':', xsecs, ysecs, secSize); // Seconds colon
-      }
+      
 
       //Draw seconds
-      if (ss < 10) xpos += tft.drawChar('0', xpos, ysecs, secSize); // Add leading zero
+      uint8_t ss = rtc.second();
+      if (ss < 10) xpos += tft.drawChar('0', xpos, ysecs, secSize); // add leading zero
       tft.drawNumber(ss, xpos, ysecs, secSize);                     // Draw seconds
-    }
-  }
-}
+    
+      xpos = 0;
+      ypos = 180;
+      xpos += tft.drawString("Temp: ", xpos, ypos, secSize);
+      xpos += tft.drawNumber(rtc.temp()/100, xpos, ypos, secSize);
+      tft.drawString(" deg", xpos, ypos, secSize);
 
 
-// Function to extract numbers from compile time string
-static uint8_t conv2d(const char* p) {
-  uint8_t v = 0;
-  if ('0' <= *p && *p <= '9')
-    v = *p - '0';
-  return 10 * v + *++p - '0';
+
+  Serial.print("Current Date & Time: ");
+  Serial.print(rtc.year());
+  Serial.print('/');
+  Serial.print(rtc.month());
+  Serial.print('/');
+  Serial.print(rtc.day());
+
+  Serial.print(" (");
+  Serial.print(daysOfTheWeek[rtc.dayOfWeek() - 1]);
+  Serial.print(") ");
+
+  Serial.print(rtc.hour());
+  Serial.print(':');
+  Serial.print(rtc.minute());
+  Serial.print(':');
+  Serial.println(rtc.second());
+
+  Serial.print("Temperature: ");
+  Serial.print(rtc.temp() / 100);
+  Serial.println("°C");
+
+  Serial.println();
+  delay(1000);
 }
