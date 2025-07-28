@@ -51,18 +51,18 @@ void loop() {
 
       xpos += tft.drawString("Date: ", xpos, ypos, secSize);
       // Draw day, month and year 
-      uint8_t day = rtc.day();
-      if (day < 10) xpos += tft.drawChar('0', xpos, ypos, secSize); // Add day leading zero 
-      xpos += tft.drawNumber(day, xpos, ypos, secSize);             // Draw hours
-      xpos += tft.drawChar('/', xpos, ypos , secSize);
+      // Create a buffer to hold the formatted date string "DD/MM/YYYY" + null terminator
+  char dateBuffer[12];
 
-      uint8_t month = rtc.month();
-      if (month < 10) xpos += tft.drawChar('0', xpos, ypos, secSize); // Add day leading zero 
-      xpos += tft.drawNumber(month, xpos, ypos, secSize);             // Draw hours
-      xpos += tft.drawChar('/', xpos, ypos , secSize);
+  // Get time from RTC (replace with your rtc.day(), etc.)
+  uint8_t day = rtc.day();   // Example: rtc.day();
+  uint8_t month = rtc.month();  // Example: rtc.month();
+  uint8_t year = rtc.year();    // Example: rtc.year();
 
-      uint8_t year = rtc.year();
-      xpos += tft.drawNumber(year, xpos, ypos, secSize);             // Draw hours
+  // Format the numbers into the buffer.
+  // %02d means an integer, padded with a leading 0 if it's less than 2 digits.
+  sprintf(dateBuffer, "%02d/%02d/%d", day, month, year);
+      tft.drawString(dateBuffer, xpos, ypos, secSize);
 
       xpos = 0;
       ypos = 108; // Top left corner ot clock text, about half way down
