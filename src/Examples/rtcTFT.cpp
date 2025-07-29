@@ -43,13 +43,14 @@ byte xcolon = 0, xsecs = 0;
 
 void loop() {
   tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+  tft.setFreeFont(FMB12);                 // Select the font
   rtc.refresh();
 
     // Update digital time
     int xpos = 0;
     int ypos = 45; // Top left corner ot clock text, about half way down
 
-      xpos += tft.drawString("Date: ", xpos, ypos, secSize);
+      xpos += tft.drawString("Date: ", xpos, ypos);
       // Draw day, month and year 
       // Create a buffer to hold the formatted date string "DD/MM/YYYY" + null terminator
   char dateBuffer[12];
@@ -62,69 +63,51 @@ void loop() {
   // Format the numbers into the buffer.
   // %02d means an integer, padded with a leading 0 if it's less than 2 digits.
   sprintf(dateBuffer, "%02d/%02d/%d", day, month, year);
-      tft.drawString(dateBuffer, xpos, ypos, secSize);
+    tft.fillRect(xpos, ypos, 40, 22, TFT_BLACK); // Erase old second
+      tft.drawString(dateBuffer, xpos, ypos);
 
       xpos = 0;
       ypos = 108; // Top left corner ot clock text, about half way down
-    int ysecs = ypos + 16;
+    //int ysecs = ypos + 16;
+  tft.setFreeFont(FMB18);                 // Select the font
     tft.setTextColor(TFT_GREEN, TFT_BLACK);
       // Draw hours and minutes
       uint8_t hh = rtc.hour();
-      if (hh < 10) xpos += tft.drawChar('0', xpos, ypos, charSize); // Add hours leading zero for 24 hr clock
-      xpos += tft.drawNumber(hh, xpos, ypos, charSize);             // Draw hours
-      xcolon = xpos; // Save colon coord for later to flash on/off later
+      char hour[3];
+    sprintf(hour, "%02d", hh);
+    tft.fillRect(xpos, ypos, 40, 22, TFT_BLACK); // Erase old second
+      xpos += tft.drawString(hour, xpos, ypos); // Add hours leading zero for 24 hr clock
 
   tft.setTextColor(TFT_YELLOW, TFT_BLACK);
-      xpos += tft.drawChar(':', xpos, ypos - charSize, charSize);
+      xpos += tft.drawChar(':', xpos, ypos+18 );
     tft.setTextColor(TFT_SKYBLUE, TFT_BLACK);
-      uint8_t  mm = rtc.minute();
-      if (mm < 10) xpos += tft.drawChar('0', xpos, ypos, charSize); // Add minutes leading zero
-      xpos += tft.drawNumber(mm, xpos, ypos, charSize);             // Draw minutes
-      xsecs = xpos; // Sae seconds 'x' position for later display updates
+      uint8_t mm = rtc.minute();
+      char minute[3];
+    sprintf(minute, "%02d", mm);
+    tft.fillRect(xpos, ypos, 40, 22, TFT_BLACK); // Erase old second
+      xpos += tft.drawString(minute, xpos, ypos); // Add hours leading zero for 24 hr clock
     
 
+  tft.setFreeFont(FMB12);                 // Select the font
   tft.setTextColor(TFT_YELLOW, TFT_BLACK);
-        xpos += tft.drawChar(':', xsecs, ysecs, secSize); // Seconds colon
+        xpos += tft.drawChar(':', xpos, ypos+18); // Seconds colon
       
     tft.setTextColor(TFT_MAGENTA, TFT_BLACK);
-
       //Draw seconds
       uint8_t ss = rtc.second();
-      if (ss < 10) xpos += tft.drawChar('0', xpos, ysecs, secSize); // add leading zero
-      tft.drawNumber(ss, xpos, ysecs, secSize);                     // Draw seconds
+      char seconds[3];
+    sprintf(seconds, "%02d", ss);
+    tft.fillRect(xpos, ypos, 40, 22, TFT_BLACK); // Erase old second
+      xpos += tft.drawString(seconds, xpos, ypos); // Add hours leading zero for 24 hr clock
     
   tft.setTextColor(TFT_YELLOW, TFT_BLACK);
       xpos = 0;
       ypos = 180;
-      xpos += tft.drawString("Temp: ", xpos, ypos, secSize);
-      xpos += tft.drawNumber(rtc.temp()/100, xpos, ypos, secSize);
-      xpos += tft.drawChar('°', xpos, ypos, secSize);
-      tft.drawChar('C', xpos, ypos, secSize);
+      xpos += tft.drawString("Temp: ", xpos, ypos);
+      char temp[4];
+      sprintf(temp, "%02dC",rtc.temp()/100);
+    tft.fillRect(xpos, ypos, 40, 22, TFT_BLACK); // Erase old second
+      xpos += tft.drawString(temp, xpos, ypos);
 
-
-
-
-  Serial.print("Current Date & Time: ");
-  Serial.print(rtc.year());
-  Serial.print('/');
-  Serial.print(rtc.month());
-  Serial.print('/');
-  Serial.print(rtc.day());
-
-  Serial.print(" (");
-  Serial.print(daysOfTheWeek[rtc.dayOfWeek() - 1]);
-  Serial.print(") ");
-
-  Serial.print(rtc.hour());
-  Serial.print(':');
-  Serial.print(rtc.minute());
-  Serial.print(':');
-  Serial.println(rtc.second());
-
-  Serial.print("Temperature: ");
-  Serial.print(rtc.temp() / 100);
-  Serial.println("°C");
-
-  Serial.println();
   delay(1000);
 }
