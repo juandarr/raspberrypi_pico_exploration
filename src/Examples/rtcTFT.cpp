@@ -71,7 +71,7 @@ void loop() {
   ypos = 108; // Top left corner ot clock text, about half way down
 
   tft.setFreeFont(FMB18); // Select the font
-  // Draw hours and minutes
+  // Draw hours
   uint8_t hh = rtc.hour();
   char hour[3];
   sprintf(hour, "%02d", hh);
@@ -88,6 +88,7 @@ void loop() {
 
   tft.setTextColor(TFT_YELLOW, TFT_BLACK);
   xpos += tft.drawChar(':', xpos, ypos + 18); // Minutes colon
+  // Draw minutes
   uint8_t mm = rtc.minute();
   char minute[3];
   sprintf(minute, "%02d", mm);
@@ -121,6 +122,7 @@ void loop() {
 
   xpos = 0;
   ypos = 180;
+  // Draw temperature
   tft.setTextColor(TFT_RED, TFT_BLACK);
   xpos += tft.drawString("Temp: ", xpos, ypos);
   char temp[5];
