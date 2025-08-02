@@ -6,13 +6,137 @@
 #include <SPI.h>
 #include <TFT_eSPI.h> // Hardware-specific library
 
-TFT_eSPI tft = TFT_eSPI(); // Create tft object
+// Create tft object
+TFT_eSPI tft = TFT_eSPI();
 
 // uRTCLib rtc;
 uRTCLib rtc(0x68);
 
-char daysOfTheWeek[7][12] = {"Sunday",   "Monday", "Tuesday", "Wednesday",
-                             "Thursday", "Friday", "Saturday"};
+uint8_t last_day = 99, last_month = 0, last_year = 0;
+uint8_t last_hour = 99, last_minute = 99, last_second = 99;
+int last_temp = -100;
+
+const int DATE_Y = 45;
+const int TIME_Y = 108;
+const int TEMP_Y = 180;
+
+void dateUpdate() {
+  // --- Date Update ---
+  uint8_t day = rtc.day();
+  uint8_t month = rtc.month();
+  uint8_t year = rtc.year();
+
+  if (day != last_day || month != last_month || year != last_year) {
+    char dateBuffer[12];
+    sprintf(dateBuffer, "%02d/%02d/%d", day, month, year);
+
+    tft.setFreeFont(FMB12);
+    // Erase old date by drawing over it in black
+    tft.setTextColor(TFT_BLACK, TFT_BLACK);
+    char oldDateBuffer[12];
+    sprintf(oldDateBuffer, "%02d/%02d/%d", last_day, last_month, last_year);
+    tft.drawString(oldDateBuffer, tft.textWidth("Date:  "), DATE_Y);
+
+    // Draw new date
+    tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+    tft.drawString(dateBuffer, tft.textWidth("Date:  "), DATE_Y);
+
+    last_day = day;
+    last_month = month;
+    last_year = year;
+  }
+}
+
+void timeUpdate() {
+
+  int xpos = 0;
+
+  // --- Time Update ---
+  uint8_t hour = rtc.hour();
+  uint8_t minute = rtc.minute();
+  uint8_t second = rtc.second();
+
+  tft.setFreeFont(FMB18); // Select the font
+  // Draw hours
+  char hourBuffer[3];
+  sprintf(hourBuffer, "%02d", hour);
+  if (hour != last_hour) {
+
+    tft.setTextColor(TFT_BLACK, TFT_BLACK);
+    char oldHourBuffer[3];
+    sprintf(oldHourBuffer, "%02d", last_hour);
+    tft.drawString(oldHourBuffer, xpos, TIME_Y);
+
+    tft.setTextColor(TFT_GREEN, TFT_BLACK);
+    sprintf(hourBuffer, "%02d", hour);
+    tft.drawString(hourBuffer, xpos, TIME_Y);
+    last_hour = hour;
+  }
+  xpos += tft.textWidth(hourBuffer);
+
+  tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+  xpos += tft.drawChar(':', xpos, TIME_Y + 18); // Minutes colon
+
+  // Draw minutes
+  char minuteBuffer[3];
+  sprintf(minuteBuffer, "%02d", minute);
+  if (minute != last_minute) {
+
+    tft.setTextColor(TFT_BLACK, TFT_BLACK);
+    char oldMinuteBuffer[3];
+    sprintf(oldMinuteBuffer, "%02d", last_minute);
+    tft.drawString(oldMinuteBuffer, xpos, TIME_Y);
+
+    tft.setTextColor(TFT_SKYBLUE, TFT_BLACK);
+    sprintf(minuteBuffer, "%02d", minute);
+    tft.drawString(minuteBuffer, xpos, TIME_Y);
+    last_minute = minute;
+  }
+
+  xpos += tft.textWidth(minuteBuffer);
+
+  tft.setFreeFont(FMB12); // Select the font
+  tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+  xpos += tft.drawChar(':', xpos, TIME_Y + 18); // Seconds colon
+
+  // Draw seconds
+  char secondBuffer[3];
+  sprintf(secondBuffer, "%02d", second);
+  if (second != last_second) {
+
+    tft.setTextColor(TFT_BLACK, TFT_BLACK);
+    char oldSecondBuffer[3];
+    sprintf(oldSecondBuffer, "%02d", last_second);
+    tft.drawString(oldSecondBuffer, xpos, TIME_Y);
+
+    tft.setTextColor(TFT_MAGENTA, TFT_BLACK);
+    sprintf(secondBuffer, "%02d", second);
+    tft.drawString(secondBuffer, xpos, TIME_Y);
+    last_second = second;
+  }
+}
+
+void tempUpdate() {
+  // --- Temperature Update ---
+  int temp = rtc.temp() / 100;
+  if (temp != last_temp) {
+    char tempBuffer[5];
+    sprintf(tempBuffer, "%2dC", temp);
+
+    tft.setFreeFont(FMB12);
+    // Erase old temp
+    tft.setTextColor(TFT_BLACK);
+    char oldTempBuffer[5];
+    sprintf(oldTempBuffer, "%2dC", last_temp);
+    tft.drawString(oldTempBuffer, tft.textWidth("Temp:  "), TEMP_Y);
+
+    // Draw new temp
+    tft.setTextColor(TFT_YELLOW);
+    tft.drawString(tempBuffer, tft.textWidth("Temp:  "), TEMP_Y);
+
+    last_temp = temp;
+  }
+}
 
 void setup() {
   Serial.begin(9600);
@@ -26,115 +150,22 @@ void setup() {
 
   tft.setTextSize(1);
   tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+
+  // Initial labels
+  tft.setFreeFont(FMB12);
+  tft.setTextColor(TFT_BLUE, TFT_BLACK);
+  tft.drawString("Date:  ", 0, DATE_Y);
+  tft.setFreeFont(FMB12);
+  tft.setTextColor(TFT_RED, TFT_BLACK);
+  tft.drawString("Temp:  ", 0, TEMP_Y);
 }
 
-String last_date_str = "";
-String last_hour_str = "";
-String last_min_str = "";
-String last_sec_str = "";
-String last_temp_str = "";
-
 void loop() {
-  tft.setFreeFont(FMB12); // Select the font
   rtc.refresh();
 
-  // Update digital time
-  int xpos = 0;
-  int ypos = 45; // Top left corner ot clock text, about half way down
-
-  tft.setTextColor(TFT_BLUE, TFT_BLACK);
-  xpos += tft.drawString("Date: ", xpos, ypos);
-  // Draw day, month and year
-  // Create a buffer to hold the formatted date string "DD/MM/YYYY" + null
-  // terminator
-  char dateBuffer[12];
-
-  // Get time from RTC (replace with your rtc.day(), etc.)
-  uint8_t day = rtc.day();
-  uint8_t month = rtc.month();
-  uint8_t year = rtc.year();
-
-  // Format the numbers into the buffer.
-  // %02d means an integer, padded with a leading 0 if it's less than 2 digits.
-  sprintf(dateBuffer, "%02d/%02d/%d", day, month, year);
-  String new_date_str = String(dateBuffer);
-  if (last_date_str != new_date_str) {
-
-    tft.setTextColor(TFT_BLACK, TFT_BLACK);
-    tft.drawString(last_date_str, xpos, ypos);
-    tft.setTextColor(TFT_YELLOW, TFT_BLACK);
-    tft.drawString(new_date_str, xpos, ypos);
-    last_date_str = new_date_str;
-  }
-
-  xpos = 0;
-  ypos = 108; // Top left corner ot clock text, about half way down
-
-  tft.setFreeFont(FMB18); // Select the font
-  // Draw hours
-  uint8_t hh = rtc.hour();
-  char hour[3];
-  sprintf(hour, "%02d", hh);
-  String new_hour_str = String(hour);
-
-  if (last_hour_str != new_hour_str) {
-    tft.setTextColor(TFT_BLACK, TFT_BLACK);
-    tft.drawString(last_hour_str, xpos, ypos);
-    last_hour_str = new_hour_str;
-  }
-  tft.setTextColor(TFT_GREEN, TFT_BLACK);
-  xpos += tft.drawString(new_hour_str, xpos,
-                         ypos); // Add hours leading zero for 24 hr clock
-
-  tft.setTextColor(TFT_YELLOW, TFT_BLACK);
-  xpos += tft.drawChar(':', xpos, ypos + 18); // Minutes colon
-  // Draw minutes
-  uint8_t mm = rtc.minute();
-  char minute[3];
-  sprintf(minute, "%02d", mm);
-  String new_min_str = String(minute);
-  if (last_min_str != new_min_str) {
-    tft.setTextColor(TFT_BLACK, TFT_BLACK);
-    tft.drawString(last_min_str, xpos, ypos);
-    last_min_str = new_min_str;
-  }
-
-  tft.setTextColor(TFT_SKYBLUE, TFT_BLACK);
-
-  xpos += tft.drawString(new_min_str, xpos, ypos);
-
-  tft.setFreeFont(FMB12); // Select the font
-  tft.setTextColor(TFT_YELLOW, TFT_BLACK);
-  xpos += tft.drawChar(':', xpos, ypos + 18); // Seconds colon
-
-  // Draw seconds
-  uint8_t ss = rtc.second();
-  char seconds[3];
-  sprintf(seconds, "%02d", ss);
-  String new_sec_str = String(seconds);
-  if (last_sec_str != new_sec_str) {
-    tft.setTextColor(TFT_BLACK, TFT_BLACK);
-    tft.drawString(last_sec_str, xpos, ypos);
-    tft.setTextColor(TFT_MAGENTA, TFT_BLACK);
-    xpos += tft.drawString(new_sec_str, xpos, ypos);
-    last_sec_str = new_sec_str;
-  }
-
-  xpos = 0;
-  ypos = 180;
-  // Draw temperature
-  tft.setTextColor(TFT_RED, TFT_BLACK);
-  xpos += tft.drawString("Temp: ", xpos, ypos);
-  char temp[5];
-  sprintf(temp, "%02dC", rtc.temp() / 100);
-  String new_temp_str = String(temp);
-  if (last_temp_str != new_temp_str) {
-    tft.setTextColor(TFT_BLACK, TFT_BLACK);
-    tft.drawString(last_temp_str, xpos, ypos);
-    tft.setTextColor(TFT_YELLOW, TFT_BLACK);
-    tft.drawString(new_temp_str, xpos, ypos);
-    last_temp_str = new_temp_str;
-  }
+  dateUpdate();
+  timeUpdate();
+  tempUpdate();
 
   delay(1000);
 }
