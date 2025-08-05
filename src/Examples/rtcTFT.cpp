@@ -38,7 +38,7 @@ void dateUpdate() {
     sprintf(dateBuffer, "%02d/%02d/%d", day, month, year);
 
     tft.setFreeFont(FMB12);
-    clearAndDrawText(dateBuffer, tft.textWidth("Date:  "), DATE_Y, 84, 12,
+    clearAndDrawText(dateBuffer, tft.textWidth("Date:  "), DATE_Y, 112, 16,
                      TFT_YELLOW, TFT_BLACK);
 
     last_day = day;
@@ -62,7 +62,7 @@ void timeUpdate() {
   sprintf(hourBuffer, "%02d", hour);
   if (hour != last_hour) {
 
-    clearAndDrawText(hourBuffer, xpos, TIME_Y, 40, 20, TFT_GREEN, TFT_BLACK);
+    clearAndDrawText(hourBuffer, xpos, TIME_Y, 44, 22, TFT_GREEN, TFT_BLACK);
 
     last_hour = hour;
   }
@@ -76,7 +76,7 @@ void timeUpdate() {
   sprintf(minuteBuffer, "%02d", minute);
   if (minute != last_minute) {
 
-    clearAndDrawText(minuteBuffer, xpos, TIME_Y, 40, 20, TFT_SKYBLUE,
+    clearAndDrawText(minuteBuffer, xpos, TIME_Y, 44, 22, TFT_SKYBLUE,
                      TFT_BLACK);
 
     last_minute = minute;
@@ -84,16 +84,16 @@ void timeUpdate() {
 
   xpos += tft.textWidth(minuteBuffer);
 
-  tft.setFreeFont(FMB12); // Select the font
   tft.setTextColor(TFT_YELLOW, TFT_BLACK);
   xpos += tft.drawChar(':', xpos, TIME_Y + 18); // Seconds colon
+  tft.setFreeFont(FMB12); // Select the font
 
   // Draw seconds
   char secondBuffer[3];
   sprintf(secondBuffer, "%02d", second);
   if (second != last_second) {
 
-    clearAndDrawText(secondBuffer, xpos, TIME_Y, 28, 14, TFT_MAGENTA,
+    clearAndDrawText(secondBuffer, xpos, TIME_Y, 32, 16, TFT_MAGENTA,
                      TFT_BLACK);
     last_second = second;
   }
