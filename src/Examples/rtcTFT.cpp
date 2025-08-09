@@ -86,7 +86,7 @@ void timeUpdate() {
 
   tft.setTextColor(TFT_YELLOW, TFT_BLACK);
   xpos += tft.drawChar(':', xpos, TIME_Y + 18); // Seconds colon
-  tft.setFreeFont(FMB12); // Select the font
+  tft.setFreeFont(FMB12);                       // Select the font
 
   // Draw seconds
   char secondBuffer[3];
@@ -104,11 +104,18 @@ void tempUpdate() {
   int temp = rtc.temp() / 100;
   if (temp != last_temp) {
     char tempBuffer[5];
-    sprintf(tempBuffer, "%2dC", temp);
+    sprintf(tempBuffer, "%2d", temp);
 
-    clearAndDrawText(tempBuffer, tft.textWidth("Temp:  "), TEMP_Y, 28, 14,
+    clearAndDrawText(tempBuffer, tft.textWidth("Temp:  "), TEMP_Y, 56, 14,
                      TFT_GREENYELLOW, TFT_BLACK);
 
+    // Draw the degree symbol as a circle
+    int16_t x = tft.textWidth("Temp:  ") + tft.textWidth(tempBuffer) + 4;
+    int16_t y = TEMP_Y + 4; // Adjust offset for vertical position
+    tft.fillCircle(x, y, 2, TFT_GREEN);
+
+    // Now draw the C
+    tft.drawString("C", x + 4, TEMP_Y);
     last_temp = temp;
   }
 }
