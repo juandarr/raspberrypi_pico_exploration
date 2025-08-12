@@ -1,10 +1,10 @@
 #include "Arduino.h"
 
-//RTC DS3231 libraries
+// RTC DS3231 libraries
 #include "Wire.h"
 #include "uRTCLib.h"
 
-//TFT display IL9341 libraries
+// TFT display IL9341 libraries
 #include "Examples/resources/Free_Fonts.h"
 #include <SPI.h>
 #include <TFT_eSPI.h>
@@ -15,12 +15,12 @@
 #include <time.h>
 
 // ---------- Your WiFi ----------
-const char* WIFI_SSID = "Perceptron";
-const char* WIFI_PASS = "f1l0s0f14";
+const char *WIFI_SSID = "Perceptron";
+const char *WIFI_PASS = "password";
 
 // ---------- NTP config ----------
-const char* NTP_SERVER   = "pool.ntp.org";
-const uint16_t NTP_PORT  = 123;
+const char *NTP_SERVER = "pool.ntp.org";
+const uint16_t NTP_PORT = 123;
 const uint32_t NTP_TIMEOUT_MS = 1500;
 
 // Bogotá is UTC-5, no DST.
@@ -43,7 +43,7 @@ uint8_t last_day = 99, last_month = 0, last_year = 0;
 // Previous time variables
 uint8_t last_hour = 99, last_minute = 99, last_second = 99;
 // Previous temperature variable
-int last_temp = -100;
+float last_temp = -100.0;
 
 // Y location of data (date, time and temperature) in display
 const int DATE_Y = 45;
@@ -102,7 +102,8 @@ void timeUpdate() {
   char minuteBuffer[3];
   sprintf(minuteBuffer, "%02d", minute);
   if (minute != last_minute) {
-    clearAndDrawText(minuteBuffer, xpos, TIME_Y, 44, 22, TFT_SKYBLUE, TFT_BLACK);
+    clearAndDrawText(minuteBuffer, xpos, TIME_Y, 44, 22, TFT_SKYBLUE,
+                     TFT_BLACK);
     last_minute = minute;
   }
 
@@ -115,7 +116,8 @@ void timeUpdate() {
   char secondBuffer[3];
   sprintf(secondBuffer, "%02d", second);
   if (second != last_second) {
-    clearAndDrawText(secondBuffer, xpos, TIME_Y, 32, 16, TFT_MAGENTA, TFT_BLACK);
+    clearAndDrawText(secondBuffer, xpos, TIME_Y, 32, 16, TFT_MAGENTA,
+                     TFT_BLACK);
     last_second = second;
   }
 }
@@ -141,12 +143,12 @@ void tempUpdate() {
 // ------------------- WiFi/NTP helpers -------------------
 static void wifiPowerOff() {
   Serial.println("\nTurning off Wifi...");
-  ntpUDP.stop();                     // close any UDP sockets
-  WiFi.disconnect(true);             // drop connection and clear config
-  WiFi.end();                        // deinit driver (frees memory, turns radio off)
-  #ifdef WIFI_OFF
-  WiFi.mode(WIFI_OFF);               // if the core defines it, be explicit
-  #endif
+  ntpUDP.stop();         // close any UDP sockets
+  WiFi.disconnect(true); // drop connection and clear config
+  WiFi.end();            // deinit driver (frees memory, turns radio off)
+#ifdef WIFI_OFF
+  WiFi.mode(WIFI_OFF); // if the core defines it, be explicit
+#endif
   Serial.println("\nTurning off Wifi...");
 }
 
@@ -158,24 +160,27 @@ static bool wifiPowerOnAndConnect(uint32_t timeoutMs = 15000) {
   while (WiFi.status() != WL_CONNECTED && millis() - start < timeoutMs) {
     delay(200);
   }
-  if (WiFi.status() == WL_CONNECTED){
+  if (WiFi.status() == WL_CONNECTED) {
 
-   Serial.println("\nWifi connection succesful");
-  }else {
+    Serial.println("\nWifi connection succesful");
+  } else {
 
     Serial.println("\nWifi connection failed");
   }
   return WiFi.status() == WL_CONNECTED;
 }
 
-static bool getUnixTimeFromNTP(uint32_t& unixTimeOut) {
+static bool getUnixTimeFromNTP(uint32_t &unixTimeOut) {
   uint8_t pkt[48] = {0};
   pkt[0] = 0x1B; // LI=0, VN=3, Mode=3 (client)
 
-  if (!ntpUDP.begin(0)) return false;
-  if (ntpUDP.beginPacket(NTP_SERVER, NTP_PORT) != 1) return false;
+  if (!ntpUDP.begin(0))
+    return false;
+  if (ntpUDP.beginPacket(NTP_SERVER, NTP_PORT) != 1)
+    return false;
   ntpUDP.write(pkt, sizeof(pkt));
-  if (ntpUDP.endPacket() != 1) return false;
+  if (ntpUDP.endPacket() != 1)
+    return false;
 
   uint32_t start = millis();
   while (millis() - start < NTP_TIMEOUT_MS) {
@@ -184,9 +189,9 @@ static bool getUnixTimeFromNTP(uint32_t& unixTimeOut) {
       ntpUDP.read(pkt, sizeof(pkt));
       ntpUDP.stop();
 
-      uint32_t secsSince1900 =
-        ((uint32_t)pkt[40] << 24) | ((uint32_t)pkt[41] << 16) |
-        ((uint32_t)pkt[42] << 8)  | ((uint32_t)pkt[43]);
+      uint32_t secsSince1900 = ((uint32_t)pkt[40] << 24) |
+                               ((uint32_t)pkt[41] << 16) |
+                               ((uint32_t)pkt[42] << 8) | ((uint32_t)pkt[43]);
 
       const uint32_t NTP_UNIX_DELTA = 2208988800UL;
       unixTimeOut = secsSince1900 - NTP_UNIX_DELTA;
@@ -200,34 +205,31 @@ static bool getUnixTimeFromNTP(uint32_t& unixTimeOut) {
 
 static void setRTCFromUnix(uint32_t unixTimeUtc, int32_t tzOffsetSeconds) {
   time_t t = (time_t)((int64_t)unixTimeUtc + tzOffsetSeconds);
-  struct tm* tm_p = gmtime(&t);
-  if (!tm_p) return;
+  struct tm *tm_p = gmtime(&t);
+  if (!tm_p)
+    return;
   uint8_t dow = (uint8_t)tm_p->tm_wday + 1; // dS3231 wants 1..7, Sun=1
-  uint8_t y2 = (tm_p->tm_year+1900) %100;
+  uint8_t y2 = (tm_p->tm_year + 1900) % 100;
 
-  rtc.set(
-    (uint8_t)tm_p->tm_sec,
-    (uint8_t)tm_p->tm_min,
-    (uint8_t)tm_p->tm_hour,
-    dow,
-    (uint8_t)tm_p->tm_mday,
-    (uint8_t)tm_p->tm_mon + 1,
-    y2
-  );
+  rtc.set((uint8_t)tm_p->tm_sec, (uint8_t)tm_p->tm_min, (uint8_t)tm_p->tm_hour,
+          dow, (uint8_t)tm_p->tm_mday, (uint8_t)tm_p->tm_mon + 1, y2);
 }
 
 // Convert a civil date-time (UTC) to Unix time (seconds since 1970-01-01).
 // Works for years in a wide range; returns uint32_t (good through year 2106).
-static uint32_t unixFromYMDHMS(int year, int mon, int day, int hour, int min, int sec) {
+static uint32_t unixFromYMDHMS(int year, int mon, int day, int hour, int min,
+                               int sec) {
   // Howard Hinnant’s days-from-civil algorithm (condensed, no DST, no TZ).
   // Month 1..12, Day 1..31
   year -= mon <= 2;
   const int era = (year >= 0 ? year : year - 399) / 400;
-  const unsigned yoe = (unsigned)(year - era * 400);                 // [0, 399]
-  const unsigned doy = (153u * (mon + (mon > 2 ? -3 : 9)) + 2) / 5 + day - 1; // [0, 365]
-  const unsigned doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;        // [0, 146096]
-  const int days = era * 146097 + (int)doe - 719468;                 // days since 1970-01-01
-  return (uint32_t)days * 86400u + (uint32_t)hour * 3600u + (uint32_t)min * 60u + (uint32_t)sec;
+  const unsigned yoe = (unsigned)(year - era * 400); // [0, 399]
+  const unsigned doy =
+      (153u * (mon + (mon > 2 ? -3 : 9)) + 2) / 5 + day - 1;  // [0, 365]
+  const unsigned doe = yoe * 365 + yoe / 4 - yoe / 100 + doy; // [0, 146096]
+  const int days = era * 146097 + (int)doe - 719468; // days since 1970-01-01
+  return (uint32_t)days * 86400u + (uint32_t)hour * 3600u +
+         (uint32_t)min * 60u + (uint32_t)sec;
 }
 
 // One-shot: power on WiFi, sync RTC, power off WiFi
@@ -240,29 +242,36 @@ static bool doOneNtpSync() {
     if (getUnixTimeFromNTP(unixUtc)) {
       // Only adjust if off by >= 1 s
       rtc.refresh();
-      struct tm cur{};
+      struct tm cur {};
       cur.tm_year = rtc.year() - 1900;
-      cur.tm_mon  = rtc.month() - 1;
+      cur.tm_mon = rtc.month() - 1;
       cur.tm_mday = rtc.day();
       cur.tm_hour = rtc.hour();
-      cur.tm_min  = rtc.minute();
-      cur.tm_sec  = rtc.second();
-      // Treat that local timestamp "as if" it were UTC, then shift by your TZ offset to get real UTC
-uint32_t currentAsIfUtc = unixFromYMDHMS(cur.tm_year, cur.tm_mon, cur.tm_mday, cur.tm_hour,cur.tm_min, cur.tm_sec);
-int64_t currentUtc = (int64_t)currentAsIfUtc - TZ_OFFSET_SECONDS; // TZ_OFFSET_SECONDS = -5*3600 for Bogotá
+      cur.tm_min = rtc.minute();
+      cur.tm_sec = rtc.second();
+      // Treat that local timestamp "as if" it were UTC, then shift by your TZ
+      // offset to get real UTC
+      uint32_t currentAsIfUtc =
+          unixFromYMDHMS(cur.tm_year, cur.tm_mon, cur.tm_mday, cur.tm_hour,
+                         cur.tm_min, cur.tm_sec);
+      int64_t currentUtc =
+          (int64_t)currentAsIfUtc -
+          TZ_OFFSET_SECONDS; // TZ_OFFSET_SECONDS = -5*3600 for Bogotá
       int64_t delta = (int64_t)unixUtc - currentUtc;
-      if (llabs(delta) >= 1) setRTCFromUnix(unixUtc, TZ_OFFSET_SECONDS);
+      if (llabs(delta) >= 1)
+        setRTCFromUnix(unixUtc, TZ_OFFSET_SECONDS);
       ok = true;
     }
   }
-  if (ok){
+  if (ok) {
 
     Serial.println("\nRTC time updated succesfully!");
-  }else {
+  } else {
     Serial.println("\nRTC time update failed!");
   }
-  wifiPowerOff();             // always turn radio off when done
-  if (ok) lastSyncMillis = millis();
+  wifiPowerOff(); // always turn radio off when done
+  if (ok)
+    lastSyncMillis = millis();
   return ok;
 }
 
@@ -296,7 +305,7 @@ void loop() {
 
   // Periodic, radio-off cadence
   if (millis() - lastSyncMillis >= SYNC_INTERVAL_MS) {
-    doOneNtpSync();     // best-effort; if it fails, RTC free-runs until next try
+    doOneNtpSync(); // best-effort; if it fails, RTC free-runs until next try
   }
 
   delay(1000);
