@@ -1,7 +1,10 @@
 #include "Arduino.h"
+
+//RTC DS3231 libraries
 #include "Wire.h"
 #include "uRTCLib.h"
 
+//TFT display IL9341 libraries
 #include "Examples/resources/Free_Fonts.h"
 #include <SPI.h>
 #include <TFT_eSPI.h>
@@ -12,8 +15,8 @@
 #include <time.h>
 
 // ---------- Your WiFi ----------
-const char* WIFI_SSID = "YOUR_WIFI";
-const char* WIFI_PASS = "YOUR_PASSWORD";
+const char* WIFI_SSID = "Perceptron";
+const char* WIFI_PASS = "f1l0s0f14";
 
 // ---------- NTP config ----------
 const char* NTP_SERVER   = "pool.ntp.org";
@@ -32,18 +35,24 @@ uint32_t lastSyncMillis = 0;
 // Create tft object
 TFT_eSPI tft = TFT_eSPI();
 
-// uRTCLib rtc;
+// uRTCLib rtc; Address to read and write time
 uRTCLib rtc(0x68);
 
+// Previous date variables
 uint8_t last_day = 99, last_month = 0, last_year = 0;
+// Previous time variables
 uint8_t last_hour = 99, last_minute = 99, last_second = 99;
+// Previous temperature variable
 int last_temp = -100;
 
+// Y location of data (date, time and temperature) in display
 const int DATE_Y = 45;
 const int TIME_Y = 108;
 const int TEMP_Y = 180;
 
-// ------------------- UI helpers (unchanged) -------------------
+// ------------------- UI helpers -------------------
+
+// Erases section with a black rectangle and writes new text
 void clearAndDrawText(String text, int x, int y, int w, int h,
                       uint16_t textColor, uint16_t bgColor) {
   tft.fillRect(x, y, w, h, bgColor);
@@ -51,6 +60,7 @@ void clearAndDrawText(String text, int x, int y, int w, int h,
   tft.drawString(text, x, y);
 }
 
+// Updates date in display
 void dateUpdate() {
   uint8_t day = rtc.day();
   uint8_t month = rtc.month();
@@ -70,6 +80,7 @@ void dateUpdate() {
   }
 }
 
+// Updates time in display
 void timeUpdate() {
   int xpos = 0;
   uint8_t hour = rtc.hour();
@@ -80,7 +91,7 @@ void timeUpdate() {
   char hourBuffer[3];
   sprintf(hourBuffer, "%02d", hour);
   if (hour != last_hour) {
-    clearAndDrawText(hourBuffer, xpos, TIME_Y, 44, 22, TFT_GREEN, TFT_BLACK);
+    clearAndDrawText(hourBuffer, xpos, TIME_Y, 44, 22, TFT_PINK, TFT_BLACK);
     last_hour = hour;
   }
   xpos += tft.textWidth(hourBuffer);
@@ -109,18 +120,19 @@ void timeUpdate() {
   }
 }
 
+// Updates temperature in display
 void tempUpdate() {
-  int temp = rtc.temp() / 100;
+  float temp = rtc.temp() / 100.0;
   if (temp != last_temp) {
     char tempBuffer[5];
-    sprintf(tempBuffer, "%2d", temp);
+    sprintf(tempBuffer, "%.2f", temp);
 
     clearAndDrawText(tempBuffer, tft.textWidth("Temp:  "), TEMP_Y, 56, 14,
                      TFT_GREENYELLOW, TFT_BLACK);
 
     int16_t x = tft.textWidth("Temp:  ") + tft.textWidth(tempBuffer) + 4;
     int16_t y = TEMP_Y + 4;
-    tft.fillCircle(x, y, 2, TFT_GREEN);
+    tft.fillCircle(x, y, 2, TFT_YELLOW);
     tft.drawString("C", x + 4, TEMP_Y);
     last_temp = temp;
   }
@@ -128,20 +140,30 @@ void tempUpdate() {
 
 // ------------------- WiFi/NTP helpers -------------------
 static void wifiPowerOff() {
+  Serial.println("\nTurning off Wifi...");
   ntpUDP.stop();                     // close any UDP sockets
   WiFi.disconnect(true);             // drop connection and clear config
   WiFi.end();                        // deinit driver (frees memory, turns radio off)
   #ifdef WIFI_OFF
   WiFi.mode(WIFI_OFF);               // if the core defines it, be explicit
   #endif
+  Serial.println("\nTurning off Wifi...");
 }
 
 static bool wifiPowerOnAndConnect(uint32_t timeoutMs = 15000) {
+  Serial.println("\nConnecting to Wifi...");
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASS);
   uint32_t start = millis();
   while (WiFi.status() != WL_CONNECTED && millis() - start < timeoutMs) {
     delay(200);
+  }
+  if (WiFi.status() == WL_CONNECTED){
+
+   Serial.println("\nWifi connection succesful");
+  }else {
+
+    Serial.println("\nWifi connection failed");
   }
   return WiFi.status() == WL_CONNECTED;
 }
@@ -180,7 +202,8 @@ static void setRTCFromUnix(uint32_t unixTimeUtc, int32_t tzOffsetSeconds) {
   time_t t = (time_t)((int64_t)unixTimeUtc + tzOffsetSeconds);
   struct tm* tm_p = gmtime(&t);
   if (!tm_p) return;
-  uint8_t dow = (uint8_t)tm_p->tm_wday + 1; // DS3231 wants 1..7, Sun=1
+  uint8_t dow = (uint8_t)tm_p->tm_wday + 1; // dS3231 wants 1..7, Sun=1
+  uint8_t y2 = (tm_p->tm_year+1900) %100;
 
   rtc.set(
     (uint8_t)tm_p->tm_sec,
@@ -189,7 +212,7 @@ static void setRTCFromUnix(uint32_t unixTimeUtc, int32_t tzOffsetSeconds) {
     dow,
     (uint8_t)tm_p->tm_mday,
     (uint8_t)tm_p->tm_mon + 1,
-    (uint16_t)tm_p->tm_year + 1900
+    y2
   );
 }
 
@@ -245,7 +268,7 @@ int64_t currentUtc = (int64_t)currentAsIfUtc - TZ_OFFSET_SECONDS; // TZ_OFFSET_S
 
 // ------------------- setup/loop -------------------
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Wire1.setSDA(14);
   Wire1.setSCL(15);
   Wire1.begin();
@@ -258,7 +281,7 @@ void setup() {
   tft.setFreeFont(FMB12);
   tft.setTextColor(TFT_BLUE, TFT_BLACK);
   tft.drawString("Date:  ", 0, DATE_Y);
-  tft.setTextColor(TFT_RED, TFT_BLACK);
+  tft.setTextColor(TFT_GREEN, TFT_BLACK);
   tft.drawString("Temp:  ", 0, TEMP_Y);
 
   // Optional: first sync at boot, then radio goes off
