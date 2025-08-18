@@ -16,7 +16,7 @@
 
 // ---------- Your WiFi ----------
 const char *WIFI_SSID = "Perceptron";
-const char *WIFI_PASS = "password";
+const char *WIFI_PASS = "f1l0s0f14";
 
 // ---------- NTP config ----------
 const char *NTP_SERVER = "pool.ntp.org";
@@ -49,7 +49,10 @@ float last_temp = -100.0;
 const int DATE_Y = 45;
 const int TIME_Y = 108;
 const int TEMP_Y = 180;
+const int UPDATE_Y=252;
 
+// Number of updates
+uint32_t updates = 0;
 // ------------------- UI helpers -------------------
 
 // Erases section with a black rectangle and writes new text
@@ -140,6 +143,22 @@ void tempUpdate() {
   }
 }
 
+// Updates time since las update in display
+void timeSinceUpdate(long time, uint32_t updates) {
+  float minutes = (time/60000.0);
+  uint8_t hours = minutes / 60;
+  minutes = minutes - hours*60.0;
+
+    char timeBuffer[8];
+    sprintf(timeBuffer, "%02d:%.2f", hours, minutes );
+
+  clearAndDrawText(timeBuffer, tft.textWidth("LastUpd: "), UPDATE_Y, 112, 14,
+                     TFT_GREENYELLOW, TFT_BLACK);
+    char updatesBuffer[3];
+    sprintf(updatesBuffer, "%02d", updates);
+  clearAndDrawText(updatesBuffer, tft.textWidth("Updates: "), UPDATE_Y+25, 42, 14,
+                     TFT_GREENYELLOW, TFT_BLACK);
+}
 // ------------------- WiFi/NTP helpers -------------------
 static void wifiPowerOff() {
   Serial.println("\nTurning off Wifi...");
@@ -149,7 +168,7 @@ static void wifiPowerOff() {
 #ifdef WIFI_OFF
   WiFi.mode(WIFI_OFF); // if the core defines it, be explicit
 #endif
-  Serial.println("\nTurning off Wifi...");
+  Serial.println("\nWifi is off...");
 }
 
 static bool wifiPowerOnAndConnect(uint32_t timeoutMs = 15000) {
@@ -260,6 +279,7 @@ static bool doOneNtpSync() {
       int64_t delta = (int64_t)unixUtc - currentUtc;
       if (llabs(delta) >= 1)
         setRTCFromUnix(unixUtc, TZ_OFFSET_SECONDS);
+        updates += 1;
       ok = true;
     }
   }
@@ -292,6 +312,10 @@ void setup() {
   tft.drawString("Date:  ", 0, DATE_Y);
   tft.setTextColor(TFT_GREEN, TFT_BLACK);
   tft.drawString("Temp:  ", 0, TEMP_Y);
+  tft.setTextColor(TFT_RED, TFT_BLACK);
+  tft.drawString("LastUpd:  ", 0, UPDATE_Y);
+  tft.setTextColor(TFT_MAGENTA, TFT_BLACK);
+  tft.drawString("Updates:  ", 0, UPDATE_Y+25);
 
   // Optional: first sync at boot, then radio goes off
   doOneNtpSync();
@@ -299,14 +323,15 @@ void setup() {
 
 void loop() {
   rtc.refresh();
+  unsigned long timeSinceLastUpdate =millis() - lastSyncMillis;
+  // Periodic, radio-off cadence
+  if ( timeSinceLastUpdate>= SYNC_INTERVAL_MS) {
+    doOneNtpSync(); // best-effort; if it fails, RTC free-runs until next try
+  }
   dateUpdate();
   timeUpdate();
   tempUpdate();
-
-  // Periodic, radio-off cadence
-  if (millis() - lastSyncMillis >= SYNC_INTERVAL_MS) {
-    doOneNtpSync(); // best-effort; if it fails, RTC free-runs until next try
-  }
+  timeSinceUpdate(timeSinceLastUpdate, updates);
 
   delay(1000);
 }
