@@ -15,8 +15,8 @@
 #include <time.h>
 
 // ---------- Your WiFi ----------
-const char *WIFI_SSID = "Perceptron";
-const char *WIFI_PASS = "f1l0s0f14";
+const char *WIFI_SSID = "NetworkID";
+const char *WIFI_PASS = "p4ssw0rd";
 
 // ---------- NTP config ----------
 const char *NTP_SERVER = "pool.ntp.org";
@@ -156,7 +156,7 @@ void timeSinceUpdate(long time, uint32_t updates) {
                      TFT_GREENYELLOW, TFT_BLACK);
     char updatesBuffer[3];
     sprintf(updatesBuffer, "%02d", updates);
-  clearAndDrawText(updatesBuffer, tft.textWidth("Updates: "), UPDATE_Y+25, 42, 14,
+  clearAndDrawText(updatesBuffer, tft.textWidth("Updates: "), UPDATE_Y+35, 42, 14,
                      TFT_GREENYELLOW, TFT_BLACK);
 }
 // ------------------- WiFi/NTP helpers -------------------
@@ -315,7 +315,7 @@ void setup() {
   tft.setTextColor(TFT_RED, TFT_BLACK);
   tft.drawString("LastUpd:  ", 0, UPDATE_Y);
   tft.setTextColor(TFT_MAGENTA, TFT_BLACK);
-  tft.drawString("Updates:  ", 0, UPDATE_Y+25);
+  tft.drawString("Updates:  ", 0, UPDATE_Y+35);
 
   // Optional: first sync at boot, then radio goes off
   doOneNtpSync();
