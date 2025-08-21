@@ -20,10 +20,7 @@
 #include <WiFiUdp.h>
 #include <WiFiClient.h>
 #include <time.h>
-
-// ---------- Your WiFi ----------
-const char *WIFI_SSID = "Network_ID";  // TODO: move to secrets.h
-const char *WIFI_PASS = "Password";   // TODO: move to secrets.h
+#include "secrets.h"
 
 // ---------- NTP config ----------
 static const uint16_t NTP_PORT = 123;
@@ -168,13 +165,10 @@ static void wifiPowerOn() {
   WiFi.mode(WIFI_STA);
 }
 
-static void wifiBeginOnce() {
-  static bool started = false;
-  if (!started) {
-    Serial.print("[wifi] begin() SSID="); Serial.println(WIFI_SSID);
-    WiFi.begin(WIFI_SSID, WIFI_PASS);
-    started = true;
-  }
+static void wifiBegin() {
+  Serial.print("[wifi] begin() SSID="); 
+  Serial.println(WIFI_SSID);
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
 }
 
 static bool resolveNtp(IPAddress &outIp, size_t hostIndex) {
@@ -249,7 +243,6 @@ static void setRTCFromUnix(uint32_t unixTimeUtc, int32_t tzOffsetSeconds) {
 }
 
 
-// Progam is not able to resync time after initial sync. Need to review state machine and helper functions
 // ================= State machine =================
 enum SyncState : uint8_t {
   ST_IDLE = 0,           // UI only
@@ -318,15 +311,18 @@ void loop() {
       break;
     }
     case ST_WIFI_WARMUP: {
+      ntpHostIndex = 0;
       wifiPowerOn();
-      wifiBeginOnce();
+      wifiBegin();
       smEnter(ST_WIFI_WAIT_CONN);
       break;
     }
     case ST_WIFI_WAIT_CONN: {
       if (WiFi.status() == WL_CONNECTED) {
-        Serial.print("[wifi] connected IP="); Serial.println(WiFi.localIP());
-        Serial.print("[wifi] DNS="); Serial.println(WiFi.dnsIP());
+        Serial.print("[wifi] connected IP="); 
+        Serial.println(WiFi.localIP());
+        Serial.print("[wifi] DNS="); 
+        Serial.println(WiFi.dnsIP());
         smEnter(ST_NTP_RESOLVE);
       } else if (now - stSince > WIFI_CONNECT_TIMEOUT_MS) {
         Serial.println("[wifi] connect timeout");
