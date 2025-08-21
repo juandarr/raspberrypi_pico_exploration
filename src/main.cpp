@@ -22,8 +22,8 @@
 #include <time.h>
 
 // ---------- Your WiFi ----------
-const char *WIFI_SSID = "Perceptron";  // TODO: move to secrets.h
-const char *WIFI_PASS = "f1l0s0f14";   // TODO: move to secrets.h
+const char *WIFI_SSID = "Network_ID";  // TODO: move to secrets.h
+const char *WIFI_PASS = "Password";   // TODO: move to secrets.h
 
 // ---------- NTP config ----------
 static const uint16_t NTP_PORT = 123;
@@ -47,9 +47,9 @@ static const uint32_t HTTP_TIMEOUT_MS = 2500;
 static const int32_t TZ_OFFSET_SECONDS = -5 * 3600;
 
 // Resync cadence and warmup
-static const uint32_t SYNC_INTERVAL_MS = 6UL * 60UL * 60UL * 1000UL;
+static const uint32_t SYNC_INTERVAL_MS = 2UL * 60UL * 1000UL;
 #ifndef SYNC_WARMUP_MS
-#define SYNC_WARMUP_MS 10000UL  // 10 s warm-up is usually enough
+#define SYNC_WARMUP_MS 10000UL  // 10s warm-up is usually enough
 #endif
 
 // Wi‑Fi connection timeout
@@ -248,6 +248,8 @@ static void setRTCFromUnix(uint32_t unixTimeUtc, int32_t tzOffsetSeconds) {
           dow, (uint8_t)tm_p->tm_mday, (uint8_t)tm_p->tm_mon + 1, y2);
 }
 
+
+// Progam is not able to resync time after initial sync. Need to review state machine and helper functions
 // ================= State machine =================
 enum SyncState : uint8_t {
   ST_IDLE = 0,           // UI only
