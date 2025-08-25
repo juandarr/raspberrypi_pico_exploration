@@ -22,6 +22,7 @@
 #include <time.h>
 #include "secrets.h"
 
+// Review NTP, WifiUDP and variables
 // ---------- NTP config ----------
 static const uint16_t NTP_PORT = 123;
 static const uint32_t NTP_TIMEOUT_MS = 1500;     // total wait after send
@@ -43,8 +44,8 @@ static const uint32_t HTTP_TIMEOUT_MS = 2500;
 // Bogotá is UTC-5, no DST.
 static const int32_t TZ_OFFSET_SECONDS = -5 * 3600;
 
-// Resync cadence and warmup
-static const uint32_t SYNC_INTERVAL_MS = 2UL * 60UL * 1000UL;
+// Resync cadence and warmup - Every 3 hours
+static const uint32_t SYNC_INTERVAL_MS = 3UL * 60UL * 60UL * 1000UL;
 #ifndef SYNC_WARMUP_MS
 #define SYNC_WARMUP_MS 10000UL  // 10s warm-up is usually enough
 #endif
@@ -54,6 +55,7 @@ static const uint32_t SYNC_INTERVAL_MS = 2UL * 60UL * 1000UL;
 
 // ================= Globals =================
 WiFiUDP ntpUDP;
+
 TFT_eSPI tft = TFT_eSPI();
 uRTCLib rtc(0x68);
 
@@ -252,7 +254,6 @@ enum SyncState : uint8_t {
   ST_NTP_SEND,           // open UDP + send request
   ST_NTP_WAIT,           // wait for reply or timeout
   ST_HTTP_FALLBACK,      // try HTTP time API (TCP/80) as last resort
-  ST_APPLY_TIME,         // write DS3231
   ST_WIFI_SHUTDOWN       // turn radio off
 };
 
@@ -281,16 +282,29 @@ void setup() {
   Serial.println("[boot] Pico W RTC/NTP state machine");
 
   // I2C on Wire1 (RTC)
-  Wire1.setSDA(14); Wire1.setSCL(15); Wire1.begin();
+  Wire1.setSDA(14); 
+  Wire1.setSCL(15); 
+  Wire1.begin();
 
   // TFT init
-  tft.init(); tft.setRotation(0); tft.fillScreen(TFT_BLACK);
-  tft.setTextSize(1); tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+  tft.init(); 
+  tft.setRotation(0); 
+  tft.fillScreen(TFT_BLACK);
+  tft.setTextSize(1); 
+  tft.setTextColor(TFT_YELLOW, TFT_BLACK);
   tft.setFreeFont(FMB12);
-  tft.setTextColor(TFT_BLUE, TFT_BLACK); tft.drawString("Date:  ", 0, DATE_Y);
-  tft.setTextColor(TFT_GREEN, TFT_BLACK); tft.drawString("Temp:  ", 0, TEMP_Y);
-  tft.setTextColor(TFT_RED, TFT_BLACK); tft.drawString("SinceUpd:  ", 0, UPDATE_Y);
-  tft.setTextColor(TFT_MAGENTA, TFT_BLACK); tft.drawString("Update #:  ", 0, UPDATE_Y + 35);
+
+  tft.setTextColor(TFT_BLUE, TFT_BLACK); 
+  tft.drawString("Date:  ", 0, DATE_Y);
+
+  tft.setTextColor(TFT_GREEN, TFT_BLACK); 
+  tft.drawString("Temp:  ", 0, TEMP_Y);
+
+  tft.setTextColor(TFT_RED, TFT_BLACK); 
+  tft.drawString("SinceUpd:  ", 0, UPDATE_Y);
+
+  tft.setTextColor(TFT_MAGENTA, TFT_BLACK); 
+  tft.drawString("Update #:  ", 0, UPDATE_Y + 35);
 
   // First sync immediately at boot (no warm-up delay)
   nextSyncAtMillis = millis();
@@ -376,10 +390,6 @@ void loop() {
         // failed this round; try again in a minute instead of 6 hours
         nextSyncAtMillis = millis() + 60000UL;
       }
-      smEnter(ST_WIFI_SHUTDOWN);
-      break;
-    }
-    case ST_APPLY_TIME: { // unused
       smEnter(ST_WIFI_SHUTDOWN);
       break;
     }
