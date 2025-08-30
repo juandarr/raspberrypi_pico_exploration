@@ -24,6 +24,7 @@ The `src/Examples` folder offers incremental demos that can be built individuall
 - TFT LCD display: showing a png image using the eSPI library
 - TFT LCD display, buttons: move through a gallery of png images
 - TFT LCD display, buttons, rtttl tones: presentation of RTTTL titles, option to pick next tone and display of png image for each new tone
+- TFT LCD display, RTC module, Wifi and NTP update: updates RTC via NTP or https
 
 These sketches act as building blocks for the more integrated main program.
 
