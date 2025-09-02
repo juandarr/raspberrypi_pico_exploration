@@ -15,20 +15,12 @@
 #include <TFT_eSPI.h>
 
 // Local modules
-#include "ui.h"
-#include "time_sync.h"
-
-// ====== WiFi/NTP (state machine lives in time_sync.cpp) ======
+#include "ui.h" // UI helpers
+#include "time_sync.h" // Wifi/NTP helpers and RTC sync. Also State machine logic
 
 // ================= Globals =================
 TFT_eSPI tft = TFT_eSPI();
 uRTCLib rtc(0x68);
-
-// UI helpers are now in ui.cpp
-
-// Wi‑Fi/NTP helpers and RTC sync were extracted to time_sync.cpp
-
-// State machine extracted to time_sync.cpp
 
 void setup() {
   Serial.begin(115200);
