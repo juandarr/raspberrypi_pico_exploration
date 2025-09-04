@@ -4,15 +4,15 @@
 #include <TFT_eSPI.h>
 #include <uRTCLib.h>
 
-// Local UI state (dirty tracking)
+// Local UI state 
 namespace {
-  // Layout Y positions (kept identical to previous code)
+  // Layout Y positions 
   constexpr int DATE_Y = 45;
   constexpr int TIME_Y = 108;
   constexpr int TEMP_Y = 180;
   constexpr int UPDATE_Y = 252;
 
-  // Previous date/time/temp for dirty updates
+  // Previous date/time/temp
   uint8_t last_day = 99, last_month = 0, last_year = 0;
   uint8_t last_hour = 99, last_minute = 99, last_second = 99;
   float last_temp = -100.0f;
