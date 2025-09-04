@@ -349,4 +349,3 @@ void timeSyncTick() {
 
 uint32_t timeSyncLastSyncMillis() { return lastSyncMillis; }
 uint32_t timeSyncUpdates() { return updates; }
-
