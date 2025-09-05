@@ -9,7 +9,7 @@
 #include "secrets.h"
 #include <uRTCLib.h>
 
-// Internal configuration (copied from original main.cpp)
+// NTP, HTTP and trigger interval configuration
 namespace cfg {
   constexpr uint16_t NTP_PORT = 123;
   constexpr uint32_t NTP_TIMEOUT_MS = 1500; // total wait after send
